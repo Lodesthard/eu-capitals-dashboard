@@ -57,8 +57,10 @@ meilleure météo que Madrid mais perd à cause des 400 km supplémentaires, et
 Bruxelles arrive 4e avec une météo médiocre (0,30) uniquement grâce à son CO₂
 parfait (1,00) — alors que Nicosie, la meilleure météo de la liste (0,96), tombe à
 la 19e place car c'est la plus éloignée, donc CO₂ = 0 par construction de la
-normalisation. Avec ma pondération personnelle (60 % CO₂), Madrid resterait
-premier mais Bruxelles passerait devant Rome.
+normalisation. Recalculé avec ma pondération personnelle (40 % météo / 60 % CO₂),
+Madrid reste premier (0,745) mais Bruxelles monte à la 2e place (0,720) devant
+Lisbonne (0,693) et Amsterdam (0,692) : un simple changement de poids fait entrer
+deux villes pluvieuses dans le top 4.
 
 ## 7. Stage 6 — Monitoring : quel signal sur la page publique ?
 
@@ -103,6 +105,6 @@ l'origine, et la normalisation dépend de l'ensemble des destinations comparées
 (ajouter Paris a déplacé le minimum de distance). Ici le gagnant est le même que
 depuis Paris, mais seulement parce que les deux origines sont proches et que Madrid
 a une semaine exceptionnellement sèche et ensoleillée : depuis Helsinki ou Athènes,
-le podium serait différent. La « meilleure destination » est une réponse à une
+la distance vers Madrid n'aurait plus rien de favorable et le podium changerait. La « meilleure destination » est une réponse à une
 question posée depuis un point de départ, une semaine donnée, avec une pondération
 donnée — pas un fait sur les capitales.

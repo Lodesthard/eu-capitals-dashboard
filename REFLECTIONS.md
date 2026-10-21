@@ -45,3 +45,64 @@ et à ~1 050 km de Paris son score CO₂ reste correct (les capitales encore plu
 sud — Nicosie, La Valette, Athènes — sont deux à trois fois plus loin), alors que
 les capitales proches (Bruxelles, Luxembourg, Amsterdam) devraient être pénalisées
 par la pluie et le froid.
+
+## 6. Stage 6 — La prédiction était-elle juste ?
+
+Oui : le premier run réel (21/10/2026, 03:29 UTC, origine Paris) classe **Madrid**
+en tête (score final 0,755 : météo 0,804, CO₂ 0,706 ; 18,8 °C de moyenne, 0 mm de
+pluie, 10 h de soleil/jour, 1 053 km). Ça montre que la formule 50/50 est
+prévisible : elle récompense la destination qui n'est mauvaise sur *aucun* des deux
+axes. Ce qui m'a surpris, c'est le reste du classement : Lisbonne (2e) a une
+meilleure météo que Madrid mais perd à cause des 400 km supplémentaires, et
+Bruxelles arrive 4e avec une météo médiocre (0,30) uniquement grâce à son CO₂
+parfait (1,00) — alors que Nicosie, la meilleure météo de la liste (0,96), tombe à
+la 19e place car c'est la plus éloignée, donc CO₂ = 0 par construction de la
+normalisation. Avec ma pondération personnelle (60 % CO₂), Madrid resterait
+premier mais Bruxelles passerait devant Rome.
+
+## 7. Stage 6 — Monitoring : quel signal sur la page publique ?
+
+Le seul signal visible est la ligne « Data last updated … » en bas de page, qui
+affiche `generated_at`. Si l'Action s'arrête (désactivation après 60 jours sans
+activité) ou échoue chaque semaine, cette date cesse d'avancer — mais le visiteur
+doit la lire, et savoir que les données doivent avoir moins de 7 jours. Ce n'est
+pas suffisant : le dashboard continue d'afficher une recommandation qui a l'air
+valide. J'ajouterais une alerte calculée côté page (bandeau rouge si
+`generated_at` date de plus de 8 jours, recommandation marquée « périmée »), et
+côté pipeline une notification en cas d'échec du workflow (e-mail GitHub ou issue
+ouverte automatiquement), plus un commit ou un keepalive pour éviter la
+désactivation à 60 jours.
+
+## 8. Stage 7 — Changement d'origine (Rennes)
+
+**Fichiers modifiés :**
+
+- `scripts/fetch_and_score.py` — c'est le seul endroit où l'origine intervient dans
+  le calcul : les constantes `PARIS_LAT, PARIS_LON` deviennent `ORIGIN_NAME`,
+  `ORIGIN_LAT, ORIGIN_LON` (Rennes, 48.1173, -1.6778), utilisées pour la distance
+  et pour l'exclusion par nom. Rennes n'est pas dans `capitals.csv`, donc
+  l'exclusion ne retire plus rien : Paris devient une destination et la liste passe
+  de 26 à 27. J'ai gardé l'exclusion (générique) pour que le script reste correct
+  si on choisit une capitale comme origine. Le script écrit aussi `"origin"` dans
+  `rankings.json`.
+- `docs/index.html` — le titre affichait « from Paris » en dur et le graphique
+  « all 26 destinations » en dur. La page lit maintenant `data.origin` et
+  `dest.length` depuis le JSON : l'origine n'est définie qu'à un seul endroit (le
+  script), et la page ne peut plus contredire les données.
+- `data/capitals.csv` n'a pas besoin de changer : c'est la liste des destinations,
+  pas l'origine.
+
+**Résultat :** Madrid reste 1er depuis Rennes (0,805), suivi de Lisbonne (0,793) et
+de **Paris (0,710)**, qui n'existait pas dans le classement précédent et arrive
+directement 3e grâce à un CO₂ minimal (308 km). Les distances et le CO₂ ont tous
+changé (Madrid : 1 053 → 871 km, 316 → 261 kg CO₂e A/R), et l'écart entre
+Madrid et Lisbonne se resserre (0,028 → 0,012) parce que Rennes est plus à l'ouest.
+
+**Absolu ou relatif ?** Relatif. Le score CO₂ dépend de la distance depuis
+l'origine, et la normalisation dépend de l'ensemble des destinations comparées
+(ajouter Paris a déplacé le minimum de distance). Ici le gagnant est le même que
+depuis Paris, mais seulement parce que les deux origines sont proches et que Madrid
+a une semaine exceptionnellement sèche et ensoleillée : depuis Helsinki ou Athènes,
+le podium serait différent. La « meilleure destination » est une réponse à une
+question posée depuis un point de départ, une semaine donnée, avec une pondération
+donnée — pas un fait sur les capitales.
